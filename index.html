@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizador SuTurf — Semilla El Cencerro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pine:#1F4D3A;
+    --pine-dark:#153627;
+    --cream:#F6F1E7;
+    --sage:#DCE9DF;
+    --gold:#B9873A;
+    --gold-soft:#F1E4CC;
+    --ink:#232323;
+    --ink-soft:#5B6B62;
+    --line:#CBD9CE;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:28px 20px 60px;
+  }
+  .brand{
+    font-size:13px;
+    letter-spacing:.03em;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  h1{
+    font-family:'Zilla Slab', serif;
+    font-weight:700;
+    font-size:30px;
+    line-height:1.15;
+    color:var(--pine-dark);
+    margin:0 0 22px;
+  }
+  .field-row{
+    display:flex;
+    gap:12px;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+  }
+  .field{
+    flex:1 1 160px;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  select, input[type=number]{
+    width:100%;
+    padding:11px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    font-family:'Work Sans', sans-serif;
+    font-size:16px;
+    color:var(--ink);
+  }
+  select:focus, input:focus{
+    outline:none;
+    border-color:var(--pine);
+  }
+  .note{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:10px 0 26px;
+    min-height:18px;
+  }
+  .tc-row{
+    background:var(--pine);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .tc-row label{
+    color:#DCE9DF;
+    font-size:12.5px;
+    margin:0;
+    flex:1 1 200px;
+  }
+  .tc-input{
+    display:flex;
+    align-items:center;
+    background:#fff;
+    border-radius:8px;
+    padding:0 10px;
+    flex:0 0 130px;
+  }
+  .tc-sign{
+    color:var(--ink-soft);
+    font-size:15px;
+    margin-right:2px;
+  }
+  .tc-input input{
+    border:none;
+    padding:9px 0;
+    font-size:16px;
+    font-weight:600;
+    width:100%;
+  }
+  .tc-input input:focus{ outline:none; }
+  .cards{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media (max-width:480px){
+    .cards{grid-template-columns:1fr;}
+    h1{font-size:26px;}
+  }
+  .card{
+    border-radius:12px;
+    padding:20px 18px;
+    border:1.5px solid var(--line);
+  }
+  .card.contado{
+    background:var(--sage);
+    border-color:#c3d6c9;
+  }
+  .card.financiado{
+    background:var(--gold-soft);
+    border-color:#e1c78c;
+  }
+  .card-label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--pine-dark);
+    margin-bottom:2px;
+  }
+  .card.financiado .card-label{ color:#8a5f1f; }
+  .card-sub{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  .price-usd{
+    font-family:'Zilla Slab', serif;
+    font-weight:700;
+    font-size:30px;
+    color:var(--pine-dark);
+    line-height:1;
+  }
+  .card.financiado .price-usd{ color:#7a5218; }
+  .price-ars{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+  .divider{
+    border:none;
+    border-top:1px solid rgba(0,0,0,.1);
+    margin:14px 0;
+  }
+  .total-label{
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .total-value{
+    font-size:16px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .cuotas-list{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin-top:6px;
+  }
+  .cuota-item{
+    display:flex;
+    justify-content:space-between;
+    font-size:13.5px;
+    color:var(--ink);
+  }
+  .cuota-item span.dias{
+    color:var(--ink-soft);
+  }
+  details{
+    margin-top:26px;
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+  summary{
+    cursor:pointer;
+    font-size:13px;
+    color:var(--ink-soft);
+    user-select:none;
+  }
+  .adjust-row{
+    display:flex;
+    gap:12px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .adjust-row .field{ flex:1 1 140px; }
+  .foot{
+    margin-top:20px;
+    font-size:12px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+  .internal{
+    margin-top:22px;
+    background:var(--pine-dark);
+    border-radius:12px;
+    padding:16px 18px 18px;
+  }
+  .internal-title{
+    color:#B9873A;
+    font-size:12px;
+    letter-spacing:.02em;
+    margin-bottom:12px;
+  }
+  .internal-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:480px){
+    .internal-grid{grid-template-columns:1fr;}
+  }
+  .internal-col-label{
+    color:#DCE9DF;
+    font-size:12.5px;
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .internal-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    color:#C7D6CC;
+    padding:3px 0;
+  }
+  .internal-line.total{
+    border-top:1px solid rgba(255,255,255,.15);
+    margin-top:4px;
+    padding-top:6px;
+    color:#fff;
+    font-weight:600;
+  }
+  .internal-line.sub{
+    color:#9DB0A5;
+    font-size:12px;
+  }
+  .tabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:20px;
+    border-bottom:1.5px solid var(--line);
+  }
+  .tab-btn{
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink-soft);
+    background:none;
+    border:none;
+    padding:9px 4px 11px;
+    cursor:pointer;
+    border-bottom:2.5px solid transparent;
+    margin-bottom:-1.5px;
+  }
+  .tab-btn.active{
+    color:var(--pine-dark);
+    font-weight:600;
+    border-bottom-color:var(--gold);
+  }
+  .cards-single{
+    grid-template-columns:1fr;
+    max-width:280px;
+  }
+  .internal-grid-single{
+    grid-template-columns:1fr;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">SuTurf Tandil · Semilla El Cencerro</div>
+  <h1>Cotizador</h1>
+
+  <div class="tc-row">
+    <label for="tc">Dólar (venta BNA) — actualizalo antes de cotizar</label>
+    <div class="tc-input">
+      <span class="tc-sign">$</span>
+      <input type="number" id="tc" value="1000" min="0" step="10">
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tabBtnClubes" type="button">Clubes</button>
+    <button class="tab-btn" id="tabBtnJardines" type="button">Jardines y espacios chicos</button>
+  </div>
+
+  <div class="tab-panel" id="panelClubes">
+
+  <div class="field-row">
+    <div class="field">
+      <label for="producto">Producto</label>
+      <select id="producto">
+        <option value="eminence">Raigrás perenne Eminence</option>
+        <option value="tucan">Raigrás perenne Tucán</option>
+        <option value="bermuda">Bermudagrass sin pelar</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="kg">Kilos</label>
+      <input type="number" id="kg" value="1000" min="0" step="10">
+    </div>
+  </div>
+
+  <div class="note" id="bonifNote">Incluye tu bonificación por volumen ya asegurada con Cencerro (compra propia de 3.000+ kg).</div>
+
+  <div class="cards">
+    <div class="card contado">
+      <div class="card-label">Precio contado</div>
+      <div class="card-sub">Sin financiación</div>
+      <div class="price-usd" id="precioContadoUsd">USD 0,00<span style="font-size:15px;">/kg</span></div>
+      <div class="price-ars" id="precioContadoArs">$0 /kg</div>
+      <hr class="divider">
+      <div class="total-label">Total del pedido</div>
+      <div class="total-value" id="totalContado">$0</div>
+    </div>
+    <div class="card financiado">
+      <div class="card-label">Financiado a 150 días</div>
+      <div class="card-sub">Cheques a 30-60-90-120-150</div>
+      <div class="price-usd" id="precioFinUsd">USD 0,00<span style="font-size:15px;">/kg</span></div>
+      <div class="price-ars" id="precioFinArs">$0 /kg</div>
+      <hr class="divider">
+      <div class="total-label">Total del pedido</div>
+      <div class="total-value" id="totalFin">$0</div>
+      <hr class="divider">
+      <div class="total-label">5 cheques iguales</div>
+      <div id="cuotasFin" class="cuotas-list"></div>
+    </div>
+  </div>
+
+  <details>
+    <summary>Ajustar margen / financiación</summary>
+    <div class="adjust-row">
+      <div class="field">
+        <label for="margen">Margen SuTurf (%)</label>
+        <input type="number" id="margen" value="10" min="0" step="1">
+      </div>
+      <div class="field">
+        <label for="finClub">Recargo extra que le cobrás al club por dar 150 días (%, opcional — 0 = espejás el 5% real de Cencerro sin ganar nada extra)</label>
+        <input type="number" id="finClub" value="0" min="0" step="1">
+      </div>
+    </div>
+    <div class="adjust-row">
+      <div class="field">
+        <label for="bonifRaigras">Bonificación Cencerro asegurada — Raigrás (%)</label>
+        <input type="number" id="bonifRaigras" value="10" min="0" step="1">
+      </div>
+      <div class="field">
+        <label for="bonifBermuda">Bonificación Cencerro asegurada — Bermuda (%)</label>
+        <input type="number" id="bonifBermuda" value="5" min="0" step="1">
+      </div>
+    </div>
+  </details>
+
+  <div class="foot">
+    Precios de referencia Cencerro + bonificación por volumen ya incluidas. El precio en pesos usa el dólar cargado arriba y puede variar según el tipo de cambio del día de facturación.
+  </div>
+
+  <div class="internal">
+    <div class="internal-title">Solo para vos (no se lo muestres al club)</div>
+    <div class="internal-grid">
+      <div class="internal-col">
+        <div class="internal-col-label">Contado</div>
+        <div class="internal-line"><span>Margen por markup</span><span id="margContadoMarkup">USD 0,00/kg</span></div>
+        <div class="internal-line total"><span>Margen bruto total</span><span id="margContadoTotal">USD 0,00/kg</span></div>
+        <div class="internal-line sub"><span>Sobre el pedido</span><span id="margContadoTotalPedido">$0</span></div>
+      </div>
+      <div class="internal-col">
+        <div class="internal-col-label">Financiado 150 días</div>
+        <div class="internal-line"><span>Recargo real de Cencerro (costo, no margen)</span><span id="recargoCencerroReal">5,0%</span></div>
+        <div class="internal-line"><span>Margen por markup</span><span id="margFinMarkup">USD 0,00/kg</span></div>
+        <div class="internal-line"><span>Margen por recargo a clubes</span><span id="margFinFinanciacion">USD 0,00/kg</span></div>
+        <div class="internal-line total"><span>Margen bruto total</span><span id="margFinTotal">USD 0,00/kg</span></div>
+        <div class="internal-line sub"><span>Sobre el pedido</span><span id="margFinTotalPedido">$0</span></div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="tab-panel" id="panelJardines" hidden>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="productoJ">Producto</label>
+      <select id="productoJ">
+        <option value="eminence">Raigrás perenne Eminence</option>
+        <option value="tucan">Raigrás perenne Tucán</option>
+        <option value="bermuda">Bermudagrass sin pelar</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="kgJ">Kilos</label>
+      <input type="number" id="kgJ" value="10" min="0" step="1">
+    </div>
+  </div>
+
+  <div class="note">Mismo costo base que en Clubes (incluye tu bonificación por volumen), pero con el margen minorista que definas abajo.</div>
+
+  <div class="cards cards-single">
+    <div class="card contado">
+      <div class="card-label">Precio contado</div>
+      <div class="card-sub">Venta minorista</div>
+      <div class="price-usd" id="precioJUsd">USD 0,00<span style="font-size:15px;">/kg</span></div>
+      <div class="price-ars" id="precioJArs">$0 /kg</div>
+      <hr class="divider">
+      <div class="total-label">Total del pedido</div>
+      <div class="total-value" id="totalJ">$0</div>
+    </div>
+  </div>
+
+  <details>
+    <summary>Ajustar margen</summary>
+    <div class="adjust-row">
+      <div class="field">
+        <label for="margenJ">Margen minorista (%)</label>
+        <input type="number" id="margenJ" value="40" min="0" step="1">
+      </div>
+    </div>
+  </details>
+
+  <div class="foot">
+    Pensado para bolsas sueltas o pedidos chicos (jardines, quintas, espacios reducidos), donde no aplica la bonificación por volumen que negocia cada club.
+  </div>
+
+  <div class="internal">
+    <div class="internal-title">Solo para vos (no se lo muestres al cliente)</div>
+    <div class="internal-grid internal-grid-single">
+      <div class="internal-col">
+        <div class="internal-col-label">Margen minorista</div>
+        <div class="internal-line total"><span>Margen bruto total</span><span id="margJTotal">USD 0,00/kg</span></div>
+        <div class="internal-line sub"><span>Sobre el pedido</span><span id="margJTotalPedido">$0</span></div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+</div>
+
+<script>
+const PRODUCTOS = {
+  eminence: { nombre: "Eminence", precio: 3.05, categoria: "raigras" },
+  tucan:    { nombre: "Tucán",    precio: 2.85, categoria: "raigras" },
+  bermuda:  { nombre: "Bermuda",  precio: 8.95, categoria: "bermuda" }
+};
+const RECARGO_CONTADO = 0; // el 2% de descuento por contado en Cencerro lo capitaliza Franco, no se traslada al club
+const RECARGO_150 = 0.05;
+
+function fmtUsd(n){
+  return "USD " + n.toLocaleString("es-AR", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtArs(n){
+  return "$" + Math.round(n).toLocaleString("es-AR");
+}
+
+function calcularClubes(){
+  const prodKey = document.getElementById("producto").value;
+  const kg = parseFloat(document.getElementById("kg").value) || 0;
+  const tc = parseFloat(document.getElementById("tc").value) || 0;
+  const margen = (parseFloat(document.getElementById("margen").value) || 0) / 100;
+  const finClub = (parseFloat(document.getElementById("finClub").value) || 0) / 100;
+  const bonifRaigras = (parseFloat(document.getElementById("bonifRaigras").value) || 0) / 100;
+  const bonifBermuda = (parseFloat(document.getElementById("bonifBermuda").value) || 0) / 100;
+
+  const prod = PRODUCTOS[prodKey];
+  const bonif = prod.categoria === "bermuda" ? -bonifBermuda : -bonifRaigras;
+  const precioConBonif = prod.precio * (1 + bonif);
+
+  const compraContado = precioConBonif * (1 + RECARGO_CONTADO);
+  const compra150 = precioConBonif * (1 + RECARGO_150);
+
+  const ventaContado = compraContado * (1 + margen);
+  const venta150 = compra150 * (1 + margen) * (1 + finClub);
+
+  document.getElementById("precioContadoUsd").innerHTML = fmtUsd(ventaContado) + '<span style="font-size:15px;">/kg</span>';
+  document.getElementById("precioContadoArs").textContent = fmtArs(ventaContado * tc) + " /kg";
+  document.getElementById("totalContado").textContent = fmtArs(ventaContado * tc * kg) + "  ·  " + fmtUsd(ventaContado * kg);
+
+  document.getElementById("precioFinUsd").innerHTML = fmtUsd(venta150) + '<span style="font-size:15px;">/kg</span>';
+  document.getElementById("precioFinArs").textContent = fmtArs(venta150 * tc) + " /kg";
+  const totalFinArs = venta150 * tc * kg;
+  const totalFinUsd = venta150 * kg;
+  document.getElementById("totalFin").textContent = fmtArs(totalFinArs) + "  ·  " + fmtUsd(totalFinUsd);
+
+  const plazos = [30, 60, 90, 120, 150];
+  const cuotaArs = totalFinArs / plazos.length;
+  const cuotasList = document.getElementById("cuotasFin");
+  cuotasList.innerHTML = plazos.map(d =>
+    `<div class="cuota-item"><span class="dias">A ${d} días</span><span>${fmtArs(cuotaArs)}</span></div>`
+  ).join("");
+
+  const bonifNote = document.getElementById("bonifNote");
+  bonifNote.textContent = `Incluye tu bonificación ya asegurada con Cencerro: ${(-bonif*100).toFixed(0)}% (compra propia total).`;
+
+  // --- Solo para vos: desglose de margen ---
+  const margContadoMarkup = ventaContado - compraContado;
+  const margFinMarkup = compra150 * margen;
+  const margFinFinanciacion = compra150 * (1 + margen) * finClub;
+  const margFinTotal = margFinMarkup + margFinFinanciacion;
+
+  document.getElementById("margContadoMarkup").textContent = fmtUsd(margContadoMarkup) + "/kg";
+  document.getElementById("margContadoTotal").textContent = fmtUsd(margContadoMarkup) + "/kg";
+  document.getElementById("margContadoTotalPedido").textContent = fmtArs(margContadoMarkup * tc * kg) + "  ·  " + fmtUsd(margContadoMarkup * kg);
+
+  document.getElementById("margFinMarkup").textContent = fmtUsd(margFinMarkup) + "/kg";
+  document.getElementById("margFinFinanciacion").textContent = fmtUsd(margFinFinanciacion) + "/kg";
+  document.getElementById("margFinTotal").textContent = fmtUsd(margFinTotal) + "/kg";
+  document.getElementById("margFinTotalPedido").textContent = fmtArs(margFinTotal * tc * kg) + "  ·  " + fmtUsd(margFinTotal * kg);
+  document.getElementById("recargoCencerroReal").textContent = (RECARGO_150 * 100).toFixed(1).replace(".", ",") + "%";
+}
+
+function calcularJardines(){
+  const prodKey = document.getElementById("productoJ").value;
+  const kg = parseFloat(document.getElementById("kgJ").value) || 0;
+  const tc = parseFloat(document.getElementById("tc").value) || 0;
+  const margenJ = (parseFloat(document.getElementById("margenJ").value) || 0) / 100;
+  const bonifRaigras = (parseFloat(document.getElementById("bonifRaigras").value) || 0) / 100;
+  const bonifBermuda = (parseFloat(document.getElementById("bonifBermuda").value) || 0) / 100;
+
+  const prod = PRODUCTOS[prodKey];
+  const bonif = prod.categoria === "bermuda" ? -bonifBermuda : -bonifRaigras;
+  const precioConBonif = prod.precio * (1 + bonif);
+  const costoJ = precioConBonif * (1 + RECARGO_CONTADO);
+  const ventaJ = costoJ * (1 + margenJ);
+
+  document.getElementById("precioJUsd").innerHTML = fmtUsd(ventaJ) + '<span style="font-size:15px;">/kg</span>';
+  document.getElementById("precioJArs").textContent = fmtArs(ventaJ * tc) + " /kg";
+  document.getElementById("totalJ").textContent = fmtArs(ventaJ * tc * kg) + "  ·  " + fmtUsd(ventaJ * kg);
+
+  const margJ = ventaJ - costoJ;
+  document.getElementById("margJTotal").textContent = fmtUsd(margJ) + "/kg";
+  document.getElementById("margJTotalPedido").textContent = fmtArs(margJ * tc * kg) + "  ·  " + fmtUsd(margJ * kg);
+}
+
+["producto","kg","tc","margen","finClub","bonifRaigras","bonifBermuda"].forEach(id => {
+  document.getElementById(id).addEventListener("input", calcularClubes);
+  document.getElementById(id).addEventListener("change", calcularClubes);
+});
+["productoJ","kgJ","margenJ"].forEach(id => {
+  document.getElementById(id).addEventListener("input", calcularJardines);
+  document.getElementById(id).addEventListener("change", calcularJardines);
+});
+document.getElementById("tc").addEventListener("input", calcularJardines);
+document.getElementById("tc").addEventListener("change", calcularJardines);
+
+const tabBtnClubes = document.getElementById("tabBtnClubes");
+const tabBtnJardines = document.getElementById("tabBtnJardines");
+const panelClubes = document.getElementById("panelClubes");
+const panelJardines = document.getElementById("panelJardines");
+
+tabBtnClubes.addEventListener("click", () => {
+  tabBtnClubes.classList.add("active");
+  tabBtnJardines.classList.remove("active");
+  panelClubes.hidden = false;
+  panelJardines.hidden = true;
+});
+tabBtnJardines.addEventListener("click", () => {
+  tabBtnJardines.classList.add("active");
+  tabBtnClubes.classList.remove("active");
+  panelJardines.hidden = false;
+  panelClubes.hidden = true;
+});
+
+calcularClubes();
+calcularJardines();
+</script>
+</body>
+</html>
